@@ -1,0 +1,49 @@
+#version: '2.26'
+#services:
+#  dbservice:
+#    image: mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=root
+#
+#    volumes:
+#      - ./data:/var/lib/mysql
+#    ports:
+#      - 3306:3306
+#
+#  appservice:
+#    build: ./bootrestbook
+#    depends_on:
+#      - dbservice
+#    environment:
+#      - spring.datasource.url=jdbc:mysql://dbservice:3306/bootrest_bookdb?createDatabaseIfNotExist=true
+#      - spring.datsource.username=root
+#      - spring.datasource.password=root
+#
+#    ports:
+#      - 9898:9246
+services:
+  mysql-db:
+    image: 'mysql:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: rest_book_db
+#    volumes:
+#      - ./data:/var/lib/mysql
+    ports:
+     - '3307:3306'
+
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bootrest-book:1.0
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://mysql-db:3306/rest_book_db' #?createDatabaseIfNotExist=true'
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql
+    ports:
+      - '9898:9246'
+
+
